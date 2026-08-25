@@ -1,4 +1,5 @@
 import asyncio
+import import asyncio
 import logging
 import random
 import datetime
@@ -26,10 +27,8 @@ dp = Dispatcher()
 class PortugalService:
     """Self-contained Portugal news service - NO API KEYS REQUIRED"""
     
-    # Portugal regions
     REGIONS = ["Lisbon", "Porto", "Algarve", "Coimbra", "Braga", "Aveiro"]
     
-    # Sample political headlines
     POLITICS_HEADLINES = [
         "Government approves new housing affordability bill",
         "Parliament debates healthcare system reforms",
@@ -41,7 +40,6 @@ class PortugalService:
         "Education reform bill enters final parliamentary phase"
     ]
     
-    # Sample economic headlines
     ECONOMY_HEADLINES = [
         "Inflation holds steady at 2.1% as economy stabilizes",
         "Tourism sector reports 8.4% growth year-on-year",
@@ -53,38 +51,26 @@ class PortugalService:
         "Tech sector leads employment growth in Portugal"
     ]
     
-    # Weather data (simulated)
     @staticmethod
     def get_weather():
-        """Generate realistic weather data for Portugal"""
         weather_conditions = ["☀️ Sunny", "⛅ Partly Cloudy", "🌤️ Mostly Sunny", "🌧️ Light Rain", "☁️ Cloudy"]
-        
         weather_data = {}
         for region in PortugalService.REGIONS:
             temp = random.randint(18, 32)
             condition = random.choice(weather_conditions)
-            weather_data[region] = {
-                "temp": temp,
-                "condition": condition
-            }
-        
+            weather_data[region] = {"temp": temp, "condition": condition}
         return weather_data
     
     @staticmethod
     def get_political_news():
-        """Get political headlines"""
-        headlines = random.sample(PortugalService.POLITICS_HEADLINES, 3)
-        return headlines
+        return random.sample(PortugalService.POLITICS_HEADLINES, 3)
     
     @staticmethod
     def get_economic_news():
-        """Get economic headlines"""
-        headlines = random.sample(PortugalService.ECONOMY_HEADLINES, 3)
-        return headlines
+        return random.sample(PortugalService.ECONOMY_HEADLINES, 3)
     
     @staticmethod
     def get_coming_up():
-        """Generate 'coming up' items"""
         events = [
             "🇵🇹 Cabinet meeting at 10:00 AM",
             "🏛️ Parliament session convenes at 2:30 PM",
@@ -97,7 +83,6 @@ class PortugalService:
     
     @staticmethod
     def get_today_summary():
-        """Get quick summary of today"""
         summaries = [
             "🇵🇹 Portugal's economy shows resilience with GDP growth of 1.8%",
             "🏠 New housing bill aims to make homes more affordable",
@@ -110,9 +95,7 @@ class PortugalService:
     
     @staticmethod
     def generate_daily_briefing():
-        """Generate complete morning briefing"""
         today = datetime.datetime.now().strftime("%d %B %Y")
-        
         politics = PortugalService.get_political_news()
         economy = PortugalService.get_economic_news()
         weather = PortugalService.get_weather()
@@ -136,7 +119,6 @@ class PortugalService:
 ━━━━━━━━━━━━━━━━━━
 🌤️ <b>WEATHER TODAY</b>
 """
-        
         for region, data in weather.items():
             briefing += f"• {region}: {data['temp']}°C, {data['condition']}\n"
         
@@ -153,13 +135,11 @@ class PortugalService:
 
 <b>📱 Stay informed with Pt Morning Briefing!</b>
 """
-        
         return briefing
 
 # ==================== KEYBOARDS ====================
 def main_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
-    
     builder.row(
         InlineKeyboardButton(text="📰 Daily Briefing", callback_data="briefing"),
         InlineKeyboardButton(text="🗳️ Politics", callback_data="politics")
@@ -171,7 +151,6 @@ def main_menu() -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="📊 Today's Summary", callback_data="today")
     )
-    
     return builder.as_markup()
 
 # ==================== COMMAND HANDLERS ====================
@@ -206,33 +185,27 @@ async def briefing_command(message: types.Message):
 async def politics_command(message: types.Message):
     await message.answer("🗳️ Fetching political news...")
     politics = PortugalService.get_political_news()
-    
     response = "🇵🇹 <b>Political News</b>\n\n"
     for item in politics:
         response += f"• {item}\n"
-    
     await message.answer(response)
 
 @dp.message(Command("economy"))
 async def economy_command(message: types.Message):
     await message.answer("💼 Fetching economic news...")
     economy = PortugalService.get_economic_news()
-    
     response = "🇵🇹 <b>Economic News</b>\n\n"
     for item in economy:
         response += f"• {item}\n"
-    
     await message.answer(response)
 
 @dp.message(Command("weather"))
 async def weather_command(message: types.Message):
     await message.answer("🌤️ Fetching weather data...")
     weather = PortugalService.get_weather()
-    
     response = "🌤️ <b>Portugal Weather Today</b>\n\n"
     for region, data in weather.items():
         response += f"• {region}: {data['temp']}°C, {data['condition']}\n"
-    
     await message.answer(response)
 
 @dp.message(Command("today"))
@@ -256,9 +229,7 @@ async def today_command(message: types.Message):
 @dp.callback_query()
 async def handle_callback(callback: types.CallbackQuery):
     await callback.answer()
-    
     data = callback.data
-    
     if data == "briefing":
         await briefing_command(callback.message)
     elif data == "politics":
@@ -270,6 +241,29 @@ async def handle_callback(callback: types.CallbackQuery):
     elif data == "today":
         await today_command(callback.message)
 
+# ==================== WEB SERVER FOR RAILWAY ====================
+# This keeps Railway happy with a web server
+try:
+    from aiohttp import web
+except ImportError:
+    # aiohttp not installed, install it
+    pass
+
+async def handle_health(request):
+    return web.Response(text="🇵🇹 Pt Morning Briefing Bot is running!")
+
+async def start_web_server():
+    """Start a simple web server for Railway"""
+    app = web.Application()
+    app.router.add_get('/', handle_health)
+    app.router.add_get('/health', handle_health)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
+    await site.start()
+    logging.info(f"🌐 Web server running on port {os.getenv('PORT', 8080)}")
+    return runner
+
 # ==================== MAIN ====================
 
 async def main():
@@ -278,6 +272,14 @@ async def main():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     logging.info("🇵🇹 Pt Morning Briefing Bot starting...")
+    
+    # Start web server (for Railway)
+    try:
+        runner = await start_web_server()
+    except Exception as e:
+        logging.warning(f"Web server not started: {e}")
+    
+    # Start bot polling
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
