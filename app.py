@@ -1,5 +1,4 @@
 import asyncio
-import import asyncio
 import logging
 import random
 import datetime
@@ -10,6 +9,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiohttp import web
 
 # ==================== CONFIG ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -242,13 +242,6 @@ async def handle_callback(callback: types.CallbackQuery):
         await today_command(callback.message)
 
 # ==================== WEB SERVER FOR RAILWAY ====================
-# This keeps Railway happy with a web server
-try:
-    from aiohttp import web
-except ImportError:
-    # aiohttp not installed, install it
-    pass
-
 async def handle_health(request):
     return web.Response(text="🇵🇹 Pt Morning Briefing Bot is running!")
 
@@ -264,6 +257,23 @@ async def start_web_server():
     logging.info(f"🌐 Web server running on port {os.getenv('PORT', 8080)}")
     return runner
 
+# ==================== WSGI FOR GUNICORN (If used) ====================
+app = None
+try:
+    # This is for gunicorn compatibility
+    async def wsgi_app(environ, start_response):
+        """Dummy WSGI app - we use asyncio instead"""
+        start_response('200 OK', [('Content-Type', 'text/plain')])
+        return [b'🇵🇹 Pt Morning Briefing Bot is running!']
+    
+    # For gunicorn
+    from aiohttp import web
+    app = web.Application()
+    app.router.add_get('/', handle_health)
+    app.router.add_get('/health', handle_health)
+except:
+    app = None
+
 # ==================== MAIN ====================
 
 async def main():
@@ -273,7 +283,7 @@ async def main():
     )
     logging.info("🇵🇹 Pt Morning Briefing Bot starting...")
     
-    # Start web server (for Railway)
+    # Start web server
     try:
         runner = await start_web_server()
     except Exception as e:
