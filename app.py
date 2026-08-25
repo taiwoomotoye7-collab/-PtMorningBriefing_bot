@@ -44,7 +44,7 @@ class PortugalService:
         "Inflation holds steady at 2.1% as economy stabilizes",
         "Tourism sector reports 8.4% growth year-on-year",
         "Minimum wage review commission begins deliberations",
-        "Renewable energy projects attract €500M investment",
+        "Renewable energy projects attract 500M investment",
         "Portugal's GDP grows 1.8% in latest quarter",
         "Unemployment rate drops to historic low of 5.2%",
         "Real estate market shows signs of stabilization",
@@ -53,7 +53,7 @@ class PortugalService:
     
     @staticmethod
     def get_weather():
-        weather_conditions = ["☀️ Sunny", "⛅ Partly Cloudy", "🌤️ Mostly Sunny", "🌧️ Light Rain", "☁️ Cloudy"]
+        weather_conditions = ["Sunny", "Partly Cloudy", "Mostly Sunny", "Light Rain", "Cloudy"]
         weather_data = {}
         for region in PortugalService.REGIONS:
             temp = random.randint(18, 32)
@@ -72,24 +72,24 @@ class PortugalService:
     @staticmethod
     def get_coming_up():
         events = [
-            "🇵🇹 Cabinet meeting at 10:00 AM",
-            "🏛️ Parliament session convenes at 2:30 PM",
-            "📊 Economic data release due at 11:00 AM",
-            "🌿 Environmental summit in Lisbon this afternoon",
-            "📰 Press conference scheduled for 4:00 PM",
-            "🎭 Cultural events across major cities today"
+            "Cabinet meeting at 10:00 AM",
+            "Parliament session convenes at 2:30 PM",
+            "Economic data release due at 11:00 AM",
+            "Environmental summit in Lisbon this afternoon",
+            "Press conference scheduled for 4:00 PM",
+            "Cultural events across major cities today"
         ]
         return random.sample(events, 2)
     
     @staticmethod
     def get_today_summary():
         summaries = [
-            "🇵🇹 Portugal's economy shows resilience with GDP growth of 1.8%",
-            "🏠 New housing bill aims to make homes more affordable",
-            "🌤️ Summer weather continues across the country",
-            "🌿 Portugal leads EU in renewable energy adoption",
-            "📈 Tourism sector reports record numbers this season",
-            "💼 Foreign investment reaches new highs in tech sector"
+            "Portugal's economy shows resilience with GDP growth of 1.8%",
+            "New housing bill aims to make homes more affordable",
+            "Summer weather continues across the country",
+            "Portugal leads EU in renewable energy adoption",
+            "Tourism sector reports record numbers this season",
+            "Foreign investment reaches new highs in tech sector"
         ]
         return random.choice(summaries)
     
@@ -101,39 +101,39 @@ class PortugalService:
         weather = PortugalService.get_weather()
         
         briefing = f"""
-🇵🇹 <b>PT MORNING BRIEFING</b>
-📅 {today}
+PT MORNING BRIEFING
+Date: {today}
 
-━━━━━━━━━━━━━━━━━━
-📰 <b>POLITICS & GOVERNANCE</b>
-• {politics[0]}
-• {politics[1]}
-• {politics[2]}
+------------------------------------
+POLITICS & GOVERNANCE
+-> {politics[0]}
+-> {politics[1]}
+-> {politics[2]}
 
-━━━━━━━━━━━━━━━━━━
-💼 <b>ECONOMY & BUSINESS</b>
-• {economy[0]}
-• {economy[1]}
-• {economy[2]}
+------------------------------------
+ECONOMY & BUSINESS
+-> {economy[0]}
+-> {economy[1]}
+-> {economy[2]}
 
-━━━━━━━━━━━━━━━━━━
-🌤️ <b>WEATHER TODAY</b>
+------------------------------------
+WEATHER TODAY
 """
         for region, data in weather.items():
-            briefing += f"• {region}: {data['temp']}°C, {data['condition']}\n"
+            briefing += f"-> {region}: {data['temp']}C, {data['condition']}\n"
         
         coming_up = PortugalService.get_coming_up()
         briefing += f"""
-━━━━━━━━━━━━━━━━━━
-📌 <b>COMING UP TODAY</b>
-• {coming_up[0]}
-• {coming_up[1]}
+------------------------------------
+COMING UP TODAY
+-> {coming_up[0]}
+-> {coming_up[1]}
 
-━━━━━━━━━━━━━━━━━━
-📊 <b>TODAY'S KEY TAKEAWAY</b>
+------------------------------------
+TODAY'S KEY TAKEAWAY
 {PortugalService.get_today_summary()}
 
-<b>📱 Stay informed with Pt Morning Briefing!</b>
+Stay informed with Pt Morning Briefing!
 """
         return briefing
 
@@ -141,15 +141,15 @@ class PortugalService:
 def main_menu() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="📰 Daily Briefing", callback_data="briefing"),
-        InlineKeyboardButton(text="🗳️ Politics", callback_data="politics")
+        InlineKeyboardButton(text="Daily Briefing", callback_data="briefing"),
+        InlineKeyboardButton(text="Politics", callback_data="politics")
     )
     builder.row(
-        InlineKeyboardButton(text="💼 Economy", callback_data="economy"),
-        InlineKeyboardButton(text="🌤️ Weather", callback_data="weather")
+        InlineKeyboardButton(text="Economy", callback_data="economy"),
+        InlineKeyboardButton(text="Weather", callback_data="weather")
     )
     builder.row(
-        InlineKeyboardButton(text="📊 Today's Summary", callback_data="today")
+        InlineKeyboardButton(text="Today's Summary", callback_data="today")
     )
     return builder.as_markup()
 
@@ -158,16 +158,16 @@ def main_menu() -> InlineKeyboardMarkup:
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     await message.answer(
-        "🇵🇹 <b>Pt Morning Briefing Bot</b>\n\n"
+        "Pt Morning Briefing Bot\n\n"
         "Your daily 5-minute digest of Portugal's news, economy, and weather.\n\n"
-        "📋 <b>Commands:</b>\n"
+        "Commands:\n"
         "/briefing - Complete morning briefing\n"
         "/politics - Political news\n"
         "/economy - Economic updates\n"
         "/weather - Weather across Portugal\n"
         "/today - Key stories today\n"
         "/help - Show this menu\n\n"
-        "📱 <i>Start your day informed about Portugal!</i>",
+        "Start your day informed about Portugal!",
         reply_markup=main_menu()
     )
 
@@ -177,50 +177,50 @@ async def help_command(message: types.Message):
 
 @dp.message(Command("briefing"))
 async def briefing_command(message: types.Message):
-    await message.answer("📰 Generating your daily briefing...")
+    await message.answer("Generating your daily briefing...")
     briefing = PortugalService.generate_daily_briefing()
     await message.answer(briefing)
 
 @dp.message(Command("politics"))
 async def politics_command(message: types.Message):
-    await message.answer("🗳️ Fetching political news...")
+    await message.answer("Fetching political news...")
     politics = PortugalService.get_political_news()
-    response = "🇵🇹 <b>Political News</b>\n\n"
+    response = "Political News\n\n"
     for item in politics:
-        response += f"• {item}\n"
+        response += f"- {item}\n"
     await message.answer(response)
 
 @dp.message(Command("economy"))
 async def economy_command(message: types.Message):
-    await message.answer("💼 Fetching economic news...")
+    await message.answer("Fetching economic news...")
     economy = PortugalService.get_economic_news()
-    response = "🇵🇹 <b>Economic News</b>\n\n"
+    response = "Economic News\n\n"
     for item in economy:
-        response += f"• {item}\n"
+        response += f"- {item}\n"
     await message.answer(response)
 
 @dp.message(Command("weather"))
 async def weather_command(message: types.Message):
-    await message.answer("🌤️ Fetching weather data...")
+    await message.answer("Fetching weather data...")
     weather = PortugalService.get_weather()
-    response = "🌤️ <b>Portugal Weather Today</b>\n\n"
+    response = "Portugal Weather Today\n\n"
     for region, data in weather.items():
-        response += f"• {region}: {data['temp']}°C, {data['condition']}\n"
+        response += f"- {region}: {data['temp']}C, {data['condition']}\n"
     await message.answer(response)
 
 @dp.message(Command("today"))
 async def today_command(message: types.Message):
-    await message.answer("📊 Fetching today's summary...")
+    await message.answer("Fetching today's summary...")
     response = f"""
-📊 <b>Today's Key Stories</b>
+Today's Key Stories
 
 {PortugalService.get_today_summary()}
 
-📌 <b>Coming Up:</b>
-• {PortugalService.get_coming_up()[0]}
-• {PortugalService.get_coming_up()[1]}
+Coming Up:
+- {PortugalService.get_coming_up()[0]}
+- {PortugalService.get_coming_up()[1]}
 
-<i>Stay tuned for tomorrow's briefing!</i>
+Stay tuned for tomorrow's briefing!
 """
     await message.answer(response)
 
@@ -243,7 +243,7 @@ async def handle_callback(callback: types.CallbackQuery):
 
 # ==================== WEB SERVER FOR RAILWAY ====================
 async def handle_health(request):
-    return web.Response(text="🇵🇹 Pt Morning Briefing Bot is running!")
+    return web.Response(text="Pt Morning Briefing Bot is running!")
 
 async def start_web_server():
     """Start a simple web server for Railway"""
@@ -254,25 +254,8 @@ async def start_web_server():
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
     await site.start()
-    logging.info(f"🌐 Web server running on port {os.getenv('PORT', 8080)}")
+    logging.info(f"Web server running on port {os.getenv('PORT', 8080)}")
     return runner
-
-# ==================== WSGI FOR GUNICORN (If used) ====================
-app = None
-try:
-    # This is for gunicorn compatibility
-    async def wsgi_app(environ, start_response):
-        """Dummy WSGI app - we use asyncio instead"""
-        start_response('200 OK', [('Content-Type', 'text/plain')])
-        return [b'🇵🇹 Pt Morning Briefing Bot is running!']
-    
-    # For gunicorn
-    from aiohttp import web
-    app = web.Application()
-    app.router.add_get('/', handle_health)
-    app.router.add_get('/health', handle_health)
-except:
-    app = None
 
 # ==================== MAIN ====================
 
@@ -281,7 +264,7 @@ async def main():
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    logging.info("🇵🇹 Pt Morning Briefing Bot starting...")
+    logging.info("Pt Morning Briefing Bot starting...")
     
     # Start web server
     try:
